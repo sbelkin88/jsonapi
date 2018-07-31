@@ -608,7 +608,7 @@ func unmarshalNode(data *Node, model reflect.Value, included *map[string]*Node) 
 						er = ErrUnsupportedPtrType
 						break
 					}
-					concreteVal = fieldValue
+					concreteVal = m
 				default:
 					return ErrUnsupportedPtrType
 				}
