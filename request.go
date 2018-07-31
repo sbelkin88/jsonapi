@@ -603,7 +603,8 @@ func unmarshalNode(data *Node, model reflect.Value, included *map[string]*Node) 
 						break
 					}
 
-					if err := unmarshalNode(n, fieldValue, included); err != nil {
+					m := reflect.New(fieldValue.Type().Elem())
+					if err := unmarshalNode(n, m, included); err != nil {
 						er = ErrUnsupportedPtrType
 						break
 					}
