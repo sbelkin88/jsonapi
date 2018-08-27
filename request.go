@@ -564,6 +564,68 @@ func unmarshalNode(data *Node, model reflect.Value, included *map[string]*Node) 
 				continue
 			}
 
+			v := reflect.ValueOf(val)
+
+			// JSON value was a float (numeric)
+			if v.Kind() == reflect.Float64 {
+				floatValue := v.Interface().(float64)
+
+				// The field may or may not be a pointer to a numeric; the kind var
+				// will not contain a pointer type
+				var kind reflect.Kind
+				if fieldValue.Kind() == reflect.Ptr {
+					kind = fieldType.Type.Elem().Kind()
+				} else {
+					kind = fieldType.Type.Kind()
+				}
+
+				var numericValue reflect.Value
+
+				switch kind {
+				case reflect.Int:
+					n := int(floatValue)
+					numericValue = reflect.ValueOf(&n)
+				case reflect.Int8:
+					n := int8(floatValue)
+					numericValue = reflect.ValueOf(&n)
+				case reflect.Int16:
+					n := int16(floatValue)
+					numericValue = reflect.ValueOf(&n)
+				case reflect.Int32:
+					n := int32(floatValue)
+					numericValue = reflect.ValueOf(&n)
+				case reflect.Int64:
+					n := int64(floatValue)
+					numericValue = reflect.ValueOf(&n)
+				case reflect.Uint:
+					n := uint(floatValue)
+					numericValue = reflect.ValueOf(&n)
+				case reflect.Uint8:
+					n := uint8(floatValue)
+					numericValue = reflect.ValueOf(&n)
+				case reflect.Uint16:
+					n := uint16(floatValue)
+					numericValue = reflect.ValueOf(&n)
+				case reflect.Uint32:
+					n := uint32(floatValue)
+					numericValue = reflect.ValueOf(&n)
+				case reflect.Uint64:
+					n := uint64(floatValue)
+					numericValue = reflect.ValueOf(&n)
+				case reflect.Float32:
+					n := float32(floatValue)
+					numericValue = reflect.ValueOf(&n)
+				case reflect.Float64:
+					n := floatValue
+					numericValue = reflect.ValueOf(&n)
+				default:
+					return ErrUnknownFieldNumberType
+				}
+
+				assign(fieldValue, numericValue)
+				continue
+			}
+
 			// Field was a Pointer type
 			if fieldValue.Kind() == reflect.Map {
 				val, ok := val.(map[string]interface{})
